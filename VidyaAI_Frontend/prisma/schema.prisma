@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model access_roles {
+  id               Int       @id @default(autoincrement())
+  name             String    @unique(map: "ix_access_roles_name") @db.VarChar(120)
+  description      String?
+  permissions_json String
+  is_system        Boolean
+  created_at       DateTime  @db.Timestamp(6)
+  schools          schools[]
+  users            users[]
+
+  @@index([id], map: "ix_access_roles_id")
+}
+
+model book_pages {
+  id            Int             @id @default(autoincrement())
+  book_id       Int
+  page_number   Int
+  image_path    String          @db.VarChar(500)
+  text_content  String?
+  created_at    DateTime        @db.Timestamp(6)
+  books         books           @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  chapter_pages chapter_pages[]
+
+  @@index([id], map: "ix_book_pages_id")
+}
+
+model book_structure_cache {
+  id                    Int      @id @default(autoincrement())
+  file_hash             String   @unique(map: "ix_book_structure_cache_file_hash") @db.VarChar(64)
+  total_pdf_pages       Int?
+  content_language      String?  @db.VarChar(20)
+  chapters_json         String
+  agent_subject         String?  @db.VarChar(100)
+  agent_system_prompt   String?
+  agent_teaching_style  String?  @db.VarChar(100)
+  agent_tts_voice_id    String?  @db.VarChar(50)
+  agent_expertise_notes String?
+  hit_count             Int
+  created_at            DateTime @db.Timestamp(6)
+  updated_at            DateTime @db.Timestamp(6)
+
+  @@index([id], map: "ix_book_structure_cache_id")
+}
+
+model books {
+  id                  Int               @id @default(autoincrement())
+  school_id           Int
+  uploaded_by_id      Int
+  class_grade         Int
+  subject             String            @db.VarChar(100)
+  title               String            @db.VarChar(255)
+  file_path           String            @db.VarChar(500)
+  file_type           String            @db.VarChar(20)
+  track               String            @db.VarChar(20)
+  exam_track          String?           @db.VarChar(50)
+  status              String            @db.VarChar(10)
+  processing_progress Int
+  processing_message  String?           @db.VarChar(255)
+  total_pdf_pages     Int?
+  content_language    String?           @db.VarChar(20)
+  file_hash           String?           @db.VarChar(64)
+  created_at          DateTime          @db.Timestamp(6)
+  book_pages          book_pages[]
+  schools             schools           @relation(fields: [school_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users               users             @relation(fields: [uploaded_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  chapters            chapters[]
+  document_chunks     document_chunks[]
+  subject_agents      subject_agents?
+
+  @@index([file_hash], map: "ix_books_file_hash")
+  @@index([id], map: "ix_books_id")
+}
+
+model chapter_pages {
+  id           Int        @id @default(autoincrement())
+  chapter_id   Int
+  book_page_id Int
+  order_index  Int
+  book_pages   book_pages @relation(fields: [book_page_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  chapters     chapters   @relation(fields: [chapter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_chapter_pages_id")
+}
+
+model chapters {
+  id                Int                 @id @default(autoincrement())
+  book_id           Int
+  chapter_number    Int
+  title             String              @db.VarChar(255)
+  content           String?
+  status            String              @db.VarChar(10)
+  pdf_start_page    Int?
+  pdf_end_page      Int?
+  created_at        DateTime            @db.Timestamp(6)
+  chapter_pages     chapter_pages[]
+  books             books               @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lecture_parts     lecture_parts[]
+  lecture_schedules lecture_schedules[]
+
+  @@index([id], map: "ix_chapters_id")
+}
+
+model demo_leads {
+  id            Int      @id @default(autoincrement())
+  full_name     String   @db.VarChar(200)
+  email         String   @db.VarChar(255)
+  phone         String   @db.VarChar(30)
+  organization  String   @db.VarChar(255)
+  role          String   @db.VarChar(100)
+  program       String   @db.VarChar(50)
+  student_count String?  @db.VarChar(50)
+  message       String?
+  status        String   @db.VarChar(30)
+  admin_notes   String?
+  created_at    DateTime @db.Timestamp(6)
+
+  @@index([email], map: "ix_demo_leads_email")
+  @@index([id], map: "ix_demo_leads_id")
+}
+
+model document_chunks {
+  id             Int      @id @default(autoincrement())
+  book_id        Int
+  chunk_index    Int
+  page_start     Int?
+  page_end       Int?
+  text_content   String
+  embedding_json String?
+  created_at     DateTime @db.Timestamp(6)
+  books          books    @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([book_id], map: "ix_document_chunks_book_id")
+  @@index([chunk_index], map: "ix_document_chunks_chunk_index")
+  @@index([id], map: "ix_document_chunks_id")
+}
+
+model lecture_parts {
+  id                    Int                     @id @default(autoincrement())
+  chapter_id            Int
+  part_number           Int
+  title                 String                  @db.VarChar(255)
+  script                String?
+  summary               String?
+  audio_path            String?                 @db.VarChar(500)
+  duration_minutes      Float
+  word_count            Int
+  status                String                  @db.VarChar(10)
+  previous_context      String?
+  created_at            DateTime                @db.Timestamp(6)
+  chapters              chapters                @relation(fields: [chapter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lecture_visual_frames lecture_visual_frames[]
+  student_progress      student_progress[]
+
+  @@index([id], map: "ix_lecture_parts_id")
+}
+
+model lecture_schedules {
+  id               Int      @id @default(autoincrement())
+  chapter_id       Int
+  school_id        Int
+  created_by_id    Int
+  scheduled_at     DateTime @db.Timestamp(6)
+  duration_minutes Float
+  status           String   @db.VarChar(9)
+  created_at       DateTime @db.Timestamp(6)
+  chapters         chapters @relation(fields: [chapter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users            users    @relation(fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  schools          schools  @relation(fields: [school_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_lecture_schedules_id")
+}
+
+model lecture_visual_frames {
+  id               Int           @id @default(autoincrement())
+  lecture_part_id  Int
+  frame_number     Int
+  caption          String        @db.VarChar(500)
+  segment_text     String
+  image_path       String        @db.VarChar(500)
+  start_seconds    Float
+  duration_seconds Float
+  book_page_number Int?
+  source_type      String        @db.VarChar(20)
+  created_at       DateTime      @db.Timestamp(6)
+  lecture_parts    lecture_parts @relation(fields: [lecture_part_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_lecture_visual_frames_id")
+}
+
+model practice_papers {
+  id                 Int                 @id @default(autoincrement())
+  student_id         Int
+  template_id        Int?
+  title              String              @db.VarChar(255)
+  subject            String              @db.VarChar(100)
+  plan_type          String              @db.VarChar(30)
+  questions_json     String
+  score              Int?
+  total_questions    Int?
+  submitted_at       DateTime?           @db.Timestamp(6)
+  created_at         DateTime            @db.Timestamp(6)
+  users              users               @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  practice_templates practice_templates? @relation(fields: [template_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_practice_papers_id")
+}
+
+model practice_templates {
+  id              Int               @id @default(autoincrement())
+  school_id       Int
+  created_by_id   Int
+  title           String            @db.VarChar(255)
+  plan_type       String            @db.VarChar(30)
+  class_grade     Int
+  subject         String            @db.VarChar(100)
+  chapter_ids     String
+  question_count  Int
+  track           String            @db.VarChar(20)
+  created_at      DateTime          @db.Timestamp(6)
+  practice_papers practice_papers[]
+  users           users             @relation(fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  schools         schools           @relation(fields: [school_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_practice_templates_id")
+}
+
+model processing_jobs {
+  id            Int      @id @default(autoincrement())
+  job_type      String   @db.VarChar(50)
+  book_id       Int
+  payload       String?
+  status        String   @db.VarChar(20)
+  progress      Int
+  error_message String?
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @db.Timestamp(6)
+
+  @@index([book_id], map: "ix_processing_jobs_book_id")
+  @@index([id], map: "ix_processing_jobs_id")
+  @@index([job_type], map: "ix_processing_jobs_job_type")
+  @@index([status], map: "ix_processing_jobs_status")
+}
+
+model schools {
+  id                     Int                  @id @default(autoincrement())
+  name                   String               @db.VarChar(255)
+  organization_type      String               @db.VarChar(100)
+  default_access_role_id Int?
+  address                String?
+  created_at             DateTime             @db.Timestamp(6)
+  books                  books[]
+  lecture_schedules      lecture_schedules[]
+  practice_templates     practice_templates[]
+  access_roles           access_roles?        @relation(fields: [default_access_role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                  users[]
+
+  @@index([id], map: "ix_schools_id")
+  @@index([name], map: "ix_schools_name")
+}
+
+model student_progress {
+  id                    Int           @id @default(autoincrement())
+  student_id            Int
+  lecture_part_id       Int
+  completed             Boolean
+  last_position_seconds Int
+  updated_at            DateTime      @db.Timestamp(6)
+  lecture_parts         lecture_parts @relation(fields: [lecture_part_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users         @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_student_progress_id")
+}
+
+model subject_agents {
+  id               Int      @id @default(autoincrement())
+  book_id          Int      @unique(map: "ix_subject_agents_book_id")
+  subject          String   @db.VarChar(100)
+  content_language String   @db.VarChar(20)
+  teaching_style   String   @db.VarChar(100)
+  system_prompt    String
+  tts_voice_id     String   @db.VarChar(50)
+  expertise_notes  String?
+  created_at       DateTime @db.Timestamp(6)
+  books            books    @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_subject_agents_id")
+}
+
+model users {
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique(map: "ix_users_email") @db.VarChar(255)
+  hashed_password    String               @db.VarChar(255)
+  full_name          String               @db.VarChar(255)
+  role               String               @db.VarChar(11)
+  school_id          Int?
+  class_grade        Int?
+  track              String               @db.VarChar(20)
+  exam_track         String?              @db.VarChar(50)
+  is_active          Boolean
+  account_status     String               @db.VarChar(30)
+  status_note        String?
+  access_role_id     Int?
+  phone              String?              @db.VarChar(30)
+  parent_name        String?              @db.VarChar(255)
+  parent_phone       String?              @db.VarChar(30)
+  created_at         DateTime             @db.Timestamp(6)
+  books              books[]
+  lecture_schedules  lecture_schedules[]
+  practice_papers    practice_papers[]
+  practice_templates practice_templates[]
+  student_progress   student_progress[]
+  access_roles       access_roles?        @relation(fields: [access_role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  schools            schools?             @relation(fields: [school_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_users_id")
+}

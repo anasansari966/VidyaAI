@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" fill="none">
+  <rect width="400" height="520" fill="#fafafa"/>
+  <rect x="0" y="0" width="400" height="520" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="32" y="44" fill="#1e293b" font-family="Georgia, serif" font-size="11" font-weight="700">CHAPTER 2</text>
+  <text x="32" y="68" fill="#0f172a" font-family="Georgia, serif" font-size="18" font-weight="700">Is Matter Around Us Pure?</text>
+  <line x1="32" y1="78" x2="368" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="32" y="108" fill="#334155" font-family="Arial, sans-serif" font-size="12" font-weight="700">2.1 What is a Mixture?</text>
+  <text x="32" y="132" fill="#475569" font-family="Arial, sans-serif" font-size="10">Mixtures are constituted by more than one kind of pure form of matter. We know</text>
+  <text x="32" y="148" fill="#475569" font-family="Arial, sans-serif" font-size="10">that dissolved substances are also present in water. In other words, water is also a</text>
+  <text x="32" y="164" fill="#475569" font-family="Arial, sans-serif" font-size="10">mixture. We can also think of many other examples of mixtures.</text>
+  <text x="32" y="196" fill="#334155" font-family="Arial, sans-serif" font-size="12" font-weight="700">2.2 Types of Mixtures</text>
+  <text x="32" y="220" fill="#475569" font-family="Arial, sans-serif" font-size="10">Depending upon the nature of the components that form a mixture, we can have</text>
+  <text x="32" y="236" fill="#475569" font-family="Arial, sans-serif" font-size="10">different types of mixtures. Mixtures can be homogeneous or heterogeneous.</text>
+  <rect x="32" y="258" width="336" height="140" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="48" y="282" fill="#64748b" font-family="Arial, sans-serif" font-size="9" font-weight="700">Fig. 2.1: Separation of mixtures</text>
+  <rect x="60" y="300" width="48" height="72" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+  <rect x="68" y="360" width="32" height="8" rx="2" fill="#64748b"/>
+  <path d="M130 372 L130 308 L170 340 Z" fill="#fef3c7" stroke="#f59e0b"/>
+  <rect x="190" y="300" width="56" height="56" rx="28" fill="#e0f2fe" stroke="#38bdf8"/>
+  <line x1="218" y1="300" x2="218" y2="356" stroke="#38bdf8" stroke-width="2"/>
+  <rect x="270" y="308" width="70" height="56" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <line x1="278" y1="324" x2="332" y2="324" stroke="#cbd5e1"/>
+  <line x1="278" y1="340" x2="332" y2="340" stroke="#cbd5e1"/>
+  <line x1="278" y1="356" x2="318" y2="356" stroke="#cbd5e1"/>
+  <text x="32" y="430" fill="#475569" font-family="Arial, sans-serif" font-size="10">A solution is a homogeneous mixture of two or more substances. The particles</text>
+  <text x="32" y="446" fill="#475569" font-family="Arial, sans-serif" font-size="10">of a solution are smaller than 1 nm in diameter and cannot be seen by naked eyes.</text>
+  <text x="340" y="496" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">18</text>
+</svg>

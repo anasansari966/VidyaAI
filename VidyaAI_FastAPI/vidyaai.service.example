@@ -1,0 +1,22 @@
+# Example systemd unit for VidyaAI backend on Ubuntu.
+# Copy to /etc/systemd/system/vidyaai.service and adjust paths.
+
+[Unit]
+Description=VidyaAI FastAPI
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/VidyaAI_FastAPI
+Environment=ENV=production
+EnvironmentFile=/home/ubuntu/VidyaAI_FastAPI/.env
+# Use gunicorn (recommended) OR uvicorn with --workers 1 only
+ExecStart=/home/ubuntu/VidyaAI_FastAPI/venv/bin/gunicorn app.main:app -c gunicorn.conf.py
+Restart=always
+RestartSec=5
+
+# DO NOT use: uvicorn ... --workers 4  (each worker runs startup and can lock Supabase)
+
+[Install]
+WantedBy=multi-user.target
